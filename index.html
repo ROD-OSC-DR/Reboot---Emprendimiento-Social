@@ -1,0 +1,553 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reboot Hub | Plataforma de Gestion Circular</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Urbanist:wght@500;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Urbanist', 'sans-serif'],
+                    },
+                    colors: {
+                        reboot: {
+                            blue: '#1e3a8a',
+                            lightblue: '#3b82f6',
+                            green: '#10b981',
+                            dark: '#0f172a',
+                            light: '#f8fafc'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        h1, h2, h3, h4, .font-heading { font-family: 'Urbanist', sans-serif; }
+
+        .view-section {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        .view-section.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .catalog-filter { transition: all 0.2s ease; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center cursor-pointer" onclick="switchView('home')">
+                    <i class="fa-solid fa-power-off text-reboot-green text-2xl mr-2"></i>
+                    <span class="font-heading font-bold text-2xl tracking-tight text-slate-900">Reboot<span class="text-reboot-green">.</span></span>
+                </div>
+                <div class="hidden md:flex space-x-8 items-center" id="nav-links">
+                    <button onclick="switchView('empresa')" class="text-sm font-medium text-slate-500 hover:text-reboot-blue transition">Portal Corporativo</button>
+                    <button onclick="switchView('estudiante')" class="text-sm font-medium text-slate-500 hover:text-reboot-green transition">Tienda Social</button>
+                    <span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold">v2.0 Beta</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+
+        <section id="view-home" class="view-section active h-[calc(100vh-64px)]">
+            <div class="flex flex-col md:flex-row h-full">
+
+                <div class="flex-1 bg-slate-900 relative group cursor-pointer overflow-hidden flex flex-col justify-center items-center p-12 text-center transition-all hover:bg-slate-800" onclick="switchView('empresa')">
+                    <div class="absolute inset-0 bg-blue-900/20 group-hover:bg-blue-900/40 transition duration-500"></div>
+                    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-10 mix-blend-overlay"></div>
+
+                    <div class="relative z-10 transform group-hover:scale-105 transition duration-500">
+                        <div class="bg-reboot-blue/20 p-6 rounded-full inline-block mb-6 ring-1 ring-reboot-blue/50">
+                            <i class="fa-solid fa-building-shield text-5xl text-reboot-lightblue"></i>
+                        </div>
+                        <h2 class="font-heading text-4xl md:text-5xl font-bold text-white mb-4">Soy Empresa</h2>
+                        <p class="text-slate-300 text-lg max-w-md mx-auto mb-8">Dona tus activos tecnologicos de forma segura. Obten tracking, video VAR del borrado de datos y reportes ESG automaticos.</p>
+                        <button class="bg-reboot-blue hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg shadow-lg shadow-blue-500/30 transition">
+                            Entrar al Portal Corporativo &rarr;
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex-1 bg-white relative group cursor-pointer overflow-hidden flex flex-col justify-center items-center p-12 text-center transition-all hover:bg-slate-50" onclick="switchView('estudiante')">
+                    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-5"></div>
+
+                    <div class="relative z-10 transform group-hover:scale-105 transition duration-500">
+                        <div class="bg-reboot-green/10 p-6 rounded-full inline-block mb-6 ring-1 ring-reboot-green/30">
+                            <i class="fa-solid fa-user-graduate text-5xl text-reboot-green"></i>
+                        </div>
+                        <h2 class="font-heading text-4xl md:text-5xl font-bold text-slate-900 mb-4">Soy Estudiante</h2>
+                        <p class="text-slate-600 text-lg max-w-md mx-auto mb-8">Accede a laptops de gama empresarial reacondicionadas con 1 ano de garantia y facilidades de microcredito.</p>
+                        <button class="bg-reboot-green hover:bg-emerald-600 text-white font-semibold py-3 px-8 rounded-lg shadow-lg shadow-emerald-500/30 transition">
+                            Explorar Tienda Social &rarr;
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="view-empresa" class="view-section py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                <div>
+                    <h1 class="font-heading text-3xl font-bold text-slate-900">Dashboard Corporativo</h1>
+                    <p class="text-slate-500">Bienvenido, Gerente de TI - Empresa Aliada S.A.</p>
+                </div>
+                <button id="pickup-btn" class="bg-reboot-blue hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-medium shadow flex items-center gap-2 transition">
+                    <i class="fa-solid fa-truck-fast"></i> Solicitar Retiro "1-Click"
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 border-l-4 border-l-reboot-blue">
+                    <p class="text-sm font-medium text-slate-500 mb-1">Equipos Donados</p>
+                    <h3 class="font-heading text-3xl font-bold text-slate-800">124</h3>
+                    <p class="text-xs text-emerald-500 mt-2"><i class="fa-solid fa-arrow-trend-up"></i> +12% este trimestre</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 border-l-4 border-l-reboot-green">
+                    <p class="text-sm font-medium text-slate-500 mb-1">CO2 Ahorrado (Kg)</p>
+                    <h3 class="font-heading text-3xl font-bold text-slate-800">4,250</h3>
+                    <p class="text-xs text-slate-400 mt-2">Certificado por Reboot</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 border-l-4 border-l-purple-500">
+                    <p class="text-sm font-medium text-slate-500 mb-1">Estudiantes Beneficiados</p>
+                    <h3 class="font-heading text-3xl font-bold text-slate-800">89</h3>
+                    <p class="text-xs text-slate-400 mt-2">Impacto Social Directo</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 border-l-4 border-l-amber-500">
+                    <p class="text-sm font-medium text-slate-500 mb-1">Ranking ESG</p>
+                    <h3 class="font-heading text-3xl font-bold text-slate-800">Top 5</h3>
+                    <p class="text-xs text-slate-400 mt-2">De 50 empresas aliadas</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-8">
+
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="font-heading text-xl font-bold text-slate-800"><i class="fa-solid fa-route text-reboot-blue mr-2"></i>Tracking en Tiempo Real</h2>
+                            <span class="bg-amber-100 text-amber-700 text-xs font-bold px-3 py-1 rounded-full">Lote #RB-2023-08 En Proceso</span>
+                        </div>
+
+                        <div class="relative pt-4 pb-8">
+                            <div class="absolute left-6 top-8 bottom-8 w-1 bg-slate-200 rounded"></div>
+
+                            <div class="relative flex items-start mb-8">
+                                <div class="w-12 h-12 bg-reboot-green rounded-full border-4 border-white shadow-sm flex items-center justify-center z-10 shrink-0">
+                                    <i class="fa-solid fa-check text-white"></i>
+                                </div>
+                                <div class="ml-4 mt-1">
+                                    <h4 class="font-bold text-slate-800">Recojo Completado</h4>
+                                    <p class="text-sm text-slate-500">Avenida San Isidro 456 - 15 Equipos</p>
+                                </div>
+                                <div class="ml-auto mt-1 text-sm text-slate-400">Hace 2 dias</div>
+                            </div>
+
+                            <div class="relative flex items-start mb-8">
+                                <div class="w-12 h-12 bg-reboot-blue rounded-full border-4 border-white shadow-sm flex items-center justify-center z-10 shrink-0">
+                                    <i class="fa-solid fa-microchip text-white animate-pulse"></i>
+                                </div>
+                                <div class="ml-4 mt-1">
+                                    <h4 class="font-bold text-reboot-blue">En Tecno-Fabrica (Borrado Data Zero)</h4>
+                                    <p class="text-sm text-slate-500">Procesando discos duros segun estandar NIST.</p>
+
+                                    <div class="mt-3 bg-slate-50 border border-slate-200 rounded-lg p-3 flex items-center gap-3">
+                                        <div class="bg-red-100 text-red-600 p-2 rounded-full"><i class="fa-solid fa-video"></i></div>
+                                        <div class="flex-grow">
+                                            <p class="text-xs font-bold text-slate-700">Video VAR Disponible</p>
+                                            <p class="text-xs text-slate-500">Destruccion logica confirmada HDD-04.</p>
+                                        </div>
+                                        <button class="text-xs bg-white border border-slate-300 hover:bg-slate-50 px-3 py-1.5 rounded font-medium shadow-sm transition" onclick="alert('Reproduciendo video de borrado de datos con marca de agua inalterable.')">Ver VAR</button>
+                                    </div>
+                                </div>
+                                <div class="ml-auto mt-1 text-sm text-reboot-blue font-medium">Actual</div>
+                            </div>
+
+                            <div class="relative flex items-start">
+                                <div class="w-12 h-12 bg-slate-200 rounded-full border-4 border-white shadow-sm flex items-center justify-center z-10 shrink-0">
+                                    <i class="fa-solid fa-store text-slate-400"></i>
+                                </div>
+                                <div class="ml-4 mt-1">
+                                    <h4 class="font-bold text-slate-500">Publicacion en Tienda Social</h4>
+                                    <p class="text-sm text-slate-400">Pendiente de reacondicionamiento estetico.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                        <h2 class="font-heading text-xl font-bold text-slate-800 mb-4"><i class="fa-solid fa-file-shield text-reboot-blue mr-2"></i>Boveda de Certificados</h2>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm text-slate-600">
+                                <thead class="text-xs text-slate-500 bg-slate-50 uppercase">
+                                    <tr>
+                                        <th class="px-4 py-3 rounded-tl-lg">Lote</th>
+                                        <th class="px-4 py-3">Fecha</th>
+                                        <th class="px-4 py-3">Tipo</th>
+                                        <th class="px-4 py-3 rounded-tr-lg">Accion</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
+                                        <td class="px-4 py-3 font-medium text-slate-800">Lote #RB-2023-07</td>
+                                        <td class="px-4 py-3">15 Oct 2023</td>
+                                        <td class="px-4 py-3"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">Data Zero + ESG</span></td>
+                                        <td class="px-4 py-3"><button class="text-reboot-blue hover:underline font-medium"><i class="fa-solid fa-download mr-1"></i> PDF</button></td>
+                                    </tr>
+                                    <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
+                                        <td class="px-4 py-3 font-medium text-slate-800">Lote #RB-2023-04</td>
+                                        <td class="px-4 py-3">02 May 2023</td>
+                                        <td class="px-4 py-3"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">Data Zero + ESG</span></td>
+                                        <td class="px-4 py-3"><button class="text-reboot-blue hover:underline font-medium"><i class="fa-solid fa-download mr-1"></i> PDF</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 h-fit sticky top-24">
+                    <h2 class="font-heading text-xl font-bold text-slate-800 mb-4"><i class="fa-solid fa-chart-pie text-reboot-green mr-2"></i>Reporte de Impacto ESG</h2>
+                    <p class="text-sm text-slate-500 mb-6">Proyeccion de reduccion de huella de carbono acumulada.</p>
+
+                    <div class="relative h-64 w-full">
+                        <canvas id="esgChart"></canvas>
+                    </div>
+
+                    <button id="export-btn" class="w-full mt-6 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2 rounded-lg transition border border-slate-300">
+                        <i class="fa-solid fa-file-export mr-2"></i>Exportar Memoria Anual
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-estudiante" class="view-section bg-slate-50 min-h-screen">
+
+            <div class="bg-slate-900 text-white py-12 px-4 sm:px-6 lg:px-8 border-b-4 border-reboot-green">
+                <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div>
+                        <span class="bg-reboot-green/20 text-reboot-green border border-reboot-green/50 px-3 py-1 rounded-full text-sm font-bold tracking-wide mb-4 inline-block">TIENDA OFICIAL</span>
+                        <h1 class="font-heading text-3xl md:text-4xl font-bold mb-2">Tecnologia Profesional, <br/>Precio de Estudiante.</h1>
+                        <p class="text-slate-400">Equipos de empresas top, restaurados y listos para tu carrera.</p>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <div class="glass-panel p-4 rounded-xl flex items-center gap-3">
+                            <i class="fa-solid fa-shield-check text-3xl text-amber-400"></i>
+                            <div>
+                                <p class="text-xs text-slate-300">Garantia Real</p>
+                                <p class="font-bold text-sm">1 Ano Completo</p>
+                            </div>
+                        </div>
+                        <div class="glass-panel p-4 rounded-xl flex items-center gap-3">
+                            <i class="fa-brands fa-windows text-3xl text-blue-400"></i>
+                            <div>
+                                <p class="text-xs text-slate-300">Licencia Oficial</p>
+                                <p class="font-bold text-sm">Programa MAR</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+                <div class="flex flex-wrap gap-3 mb-8" id="catalog-filters">
+                    <button data-filter="all" class="catalog-filter bg-slate-800 text-white px-5 py-2 rounded-full text-sm font-medium shadow transition">Todos</button>
+                    <button data-filter="engineering" class="catalog-filter bg-white border border-slate-200 text-slate-600 hover:border-reboot-green hover:text-reboot-green px-5 py-2 rounded-full text-sm font-medium shadow-sm transition"><i class="fa-solid fa-calculator mr-2"></i>Ingenieria (Potencia)</button>
+                    <button data-filter="design" class="catalog-filter bg-white border border-slate-200 text-slate-600 hover:border-reboot-green hover:text-reboot-green px-5 py-2 rounded-full text-sm font-medium shadow-sm transition"><i class="fa-solid fa-palette mr-2"></i>Diseno (Graficos)</button>
+                    <button data-filter="general" class="catalog-filter bg-white border border-slate-200 text-slate-600 hover:border-reboot-green hover:text-reboot-green px-5 py-2 rounded-full text-sm font-medium shadow-sm transition"><i class="fa-solid fa-file-word mr-2"></i>Derecho / Letras</button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="catalog-grid">
+
+                    <div class="product-card bg-white rounded-2xl shadow-sm hover:shadow-xl transition-shadow border border-slate-200 overflow-hidden relative group" data-category="engineering">
+                        <div class="absolute top-4 right-4 z-10 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-900 text-xs font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1">
+                            <i class="fa-solid fa-award"></i> Reboot Certified
+                        </div>
+
+                        <div class="h-48 bg-slate-100 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1593642634315-48f5414c3ad9?auto=format&fit=crop&w=1200&q=80" alt="Laptop ThinkPad reacondicionada" class="w-full h-full object-cover" />
+                        </div>
+
+                        <div class="p-5">
+                            <div class="text-xs text-slate-500 mb-1">Gama Empresarial - Ideal Ingenieria</div>
+                            <h3 class="font-heading font-bold text-lg text-slate-900 mb-2">ThinkPad T480 Re-Vitalizada</h3>
+
+                            <ul class="text-xs text-slate-600 space-y-1 mb-4">
+                                <li><i class="fa-solid fa-microchip w-4 text-center"></i> Intel Core i5 8va Gen</li>
+                                <li><i class="fa-solid fa-memory w-4 text-center"></i> 16GB RAM (Ampliables)</li>
+                                <li><i class="fa-solid fa-hard-drive w-4 text-center"></i> 256GB SSD Nuevo</li>
+                                <li><i class="fa-solid fa-battery-full w-4 text-center text-reboot-green"></i> Bateria +85% Vida Util</li>
+                            </ul>
+
+                            <div class="flex items-end justify-between mb-4">
+                                <div>
+                                    <p class="text-xs text-slate-400 line-through">Precio Nuevo: S/ 3,500</p>
+                                    <p class="font-heading font-bold text-2xl text-slate-900">S/ 750</p>
+                                </div>
+                            </div>
+
+                            <button class="reserve-btn w-full bg-reboot-green hover:bg-emerald-600 text-white font-medium py-2.5 rounded-lg transition shadow flex justify-center items-center gap-2 mb-2" data-product="ThinkPad T480 Re-Vitalizada">
+                                Reservar Equipo
+                            </button>
+                            <button class="quota-btn w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2 rounded-lg transition border border-slate-200 text-sm flex justify-center items-center gap-2" data-product="ThinkPad T480 Re-Vitalizada">
+                                <i class="fa-solid fa-wallet text-purple-600"></i> Aplica a Cuotas (Fintech)
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="product-card bg-white rounded-2xl shadow-sm hover:shadow-xl transition-shadow border border-slate-200 overflow-hidden relative group" data-category="general">
+                        <div class="absolute top-4 right-4 z-10 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-900 text-xs font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1">
+                            <i class="fa-solid fa-award"></i> Reboot Certified
+                        </div>
+                        <div class="h-48 bg-slate-100 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1484788984921-03950022c9ef?auto=format&fit=crop&w=1200&q=80" alt="Laptop Dell para estudio" class="w-full h-full object-cover" />
+                        </div>
+                        <div class="p-5">
+                            <div class="text-xs text-slate-500 mb-1">Ultrabook - Ideal Letras/Ofimatica</div>
+                            <h3 class="font-heading font-bold text-lg text-slate-900 mb-2">Dell Latitude 7490</h3>
+                            <ul class="text-xs text-slate-600 space-y-1 mb-4">
+                                <li><i class="fa-solid fa-microchip w-4 text-center"></i> Intel Core i5 8va Gen</li>
+                                <li><i class="fa-solid fa-memory w-4 text-center"></i> 8GB RAM</li>
+                                <li><i class="fa-solid fa-hard-drive w-4 text-center"></i> 256GB SSD Nuevo</li>
+                                <li><i class="fa-solid fa-battery-full w-4 text-center text-reboot-green"></i> Bateria +90% Vida Util</li>
+                            </ul>
+                            <div class="flex items-end justify-between mb-4">
+                                <div>
+                                    <p class="text-xs text-slate-400 line-through">Precio Nuevo: S/ 3,200</p>
+                                    <p class="font-heading font-bold text-2xl text-slate-900">S/ 650</p>
+                                </div>
+                            </div>
+                            <button class="reserve-btn w-full bg-reboot-green hover:bg-emerald-600 text-white font-medium py-2.5 rounded-lg transition shadow flex justify-center items-center gap-2 mb-2" data-product="Dell Latitude 7490">
+                                Reservar Equipo
+                            </button>
+                            <button class="quota-btn w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2 rounded-lg transition border border-slate-200 text-sm flex justify-center items-center gap-2" data-product="Dell Latitude 7490">
+                                <i class="fa-solid fa-wallet text-purple-600"></i> Aplica a Cuotas (Fintech)
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="product-card bg-gradient-to-b from-slate-900 to-slate-800 rounded-2xl shadow-lg border border-slate-700 overflow-hidden relative group" data-category="design">
+                        <div class="absolute top-4 left-4 z-10 bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded shadow-lg">
+                            Edicion Especial + Skin
+                        </div>
+                        <div class="h-48 bg-slate-800/50 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1200&q=80" alt="Workstation para diseno" class="w-full h-full object-cover" />
+                        </div>
+                        <div class="p-5 text-white">
+                            <div class="text-xs text-slate-400 mb-1">Workstation - Diseno y Arquitectura</div>
+                            <h3 class="font-heading font-bold text-lg text-white mb-2">HP ZBook 15 G5</h3>
+                            <ul class="text-xs text-slate-300 space-y-1 mb-4">
+                                <li><i class="fa-solid fa-microchip w-4 text-center"></i> Intel Core i7 H-Series</li>
+                                <li><i class="fa-solid fa-memory w-4 text-center"></i> 32GB RAM Grafica Dedicada</li>
+                                <li><i class="fa-solid fa-hard-drive w-4 text-center"></i> 512GB NVMe SSD</li>
+                                <li><i class="fa-solid fa-paint-roller w-4 text-center text-purple-400"></i> Incluye Skin Reboot Personalizado</li>
+                            </ul>
+                            <div class="flex items-end justify-between mb-4">
+                                <div>
+                                    <p class="text-xs text-slate-500 line-through">Precio Nuevo: S/ 6,500</p>
+                                    <p class="font-heading font-bold text-2xl text-reboot-green">S/ 1,200</p>
+                                </div>
+                            </div>
+                            <button class="reserve-btn w-full bg-reboot-blue hover:bg-blue-600 text-white font-medium py-2.5 rounded-lg transition shadow mb-2" data-product="HP ZBook 15 G5">
+                                Reservar Equipo
+                            </button>
+                            <button class="quota-btn w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2 rounded-lg transition border border-slate-200 text-sm flex justify-center items-center gap-2" data-product="HP ZBook 15 G5">
+                                <i class="fa-solid fa-wallet text-purple-600"></i> Aplica a Cuotas (Fintech)
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-6 text-center text-sm mt-auto">
+        <p>Prototipo Web Reboot 2.0 &copy; 2024. Laboratorio de Liderazgo e Innovacion Avanzado.</p>
+    </footer>
+
+    <script>
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach((el) => {
+                el.classList.remove('active');
+            });
+
+            const selected = document.getElementById('view-' + viewId);
+            if (selected) {
+                selected.classList.add('active');
+            }
+
+            const nav = document.getElementById('nav-links');
+            if (viewId === 'home') {
+                nav.classList.add('hidden');
+                nav.classList.remove('md:flex');
+            } else {
+                nav.classList.remove('hidden');
+                nav.classList.add('md:flex');
+
+                if (viewId === 'empresa' && !window.chartInitialized) {
+                    initEsgChart();
+                    window.chartInitialized = true;
+                }
+            }
+
+            window.scrollTo(0, 0);
+        }
+
+        function initEsgChart() {
+            const ctx = document.getElementById('esgChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'CO2 Ahorrado (Kg)',
+                        data: [150, 300, 450, 900, 1200, 1250],
+                        backgroundColor: '#10b981',
+                        borderRadius: 4,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            titleFont: { family: 'Inter' },
+                            bodyFont: { family: 'Inter' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f1f5f9' },
+                            ticks: { font: { family: 'Inter', size: 10 } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { family: 'Inter', size: 10 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function setActiveFilter(activeButton) {
+            document.querySelectorAll('.catalog-filter').forEach((button) => {
+                button.classList.remove('bg-slate-800', 'text-white');
+                button.classList.add('bg-white', 'border', 'border-slate-200', 'text-slate-600');
+            });
+
+            activeButton.classList.remove('bg-white', 'border', 'border-slate-200', 'text-slate-600');
+            activeButton.classList.add('bg-slate-800', 'text-white');
+        }
+
+        function initCatalogFilters() {
+            const filters = document.querySelectorAll('.catalog-filter');
+            const cards = document.querySelectorAll('.product-card');
+
+            filters.forEach((button) => {
+                button.addEventListener('click', () => {
+                    const filter = button.dataset.filter;
+                    setActiveFilter(button);
+
+                    cards.forEach((card) => {
+                        const category = card.dataset.category;
+                        const show = filter === 'all' || filter === category;
+                        card.style.display = show ? '' : 'none';
+                    });
+                });
+            });
+        }
+
+        function storeLead(type, product) {
+            const key = 'reboot_basic_actions';
+            const current = JSON.parse(localStorage.getItem(key) || '[]');
+            current.push({
+                type,
+                product,
+                createdAt: new Date().toISOString()
+            });
+            localStorage.setItem(key, JSON.stringify(current));
+        }
+
+        function bindBasicActions() {
+            const pickupBtn = document.getElementById('pickup-btn');
+            const exportBtn = document.getElementById('export-btn');
+
+            if (pickupBtn) {
+                pickupBtn.addEventListener('click', () => {
+                    alert('Retiro solicitado. Revisa tu correo para la confirmacion.');
+                });
+            }
+
+            if (exportBtn) {
+                exportBtn.addEventListener('click', () => {
+                    alert('La memoria anual se esta preparando para descarga.');
+                });
+            }
+
+            document.querySelectorAll('.reserve-btn').forEach((button) => {
+                button.addEventListener('click', () => {
+                    const product = button.dataset.product || 'Equipo Reboot';
+                    const name = prompt('Ingresa tu nombre para reservar: ' + product);
+
+                    if (name && name.trim().length >= 3) {
+                        storeLead('reserva', product);
+                        alert('Reserva registrada para ' + product + '. Te contactaremos pronto.');
+                    }
+                });
+            });
+
+            document.querySelectorAll('.quota-btn').forEach((button) => {
+                button.addEventListener('click', () => {
+                    const product = button.dataset.product || 'Equipo Reboot';
+                    storeLead('cuotas', product);
+                    alert('Solicitud de cuotas iniciada para ' + product + '.');
+                });
+            });
+        }
+
+        switchView('home');
+        initCatalogFilters();
+        bindBasicActions();
+    </script>
+</body>
+</html>
